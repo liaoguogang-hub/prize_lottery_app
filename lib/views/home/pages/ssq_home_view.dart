@@ -66,8 +66,7 @@ class SsqHomeViewState extends State<SsqHomeView>
     );
   }
 
-  Widget _buildBottomHint() {
-    return Padding(
+  Widget _buildBottomHint() {    return Padding(
       padding: EdgeInsets.only(top: 8.w, bottom: 20.w),
       child: const LotteryHintWidget(
         hint: '本应用不提供购彩服务，请理性购彩',

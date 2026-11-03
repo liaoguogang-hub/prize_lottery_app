@@ -17,28 +17,60 @@ subprojects {
     afterEvaluate { project ->
         if (project.hasProperty('android')) {
             project.android {
-                //flutter 3.24 要求编译sdk 34
-                compileSdk 34
+                //flutter 3.44 要求编译sdk 36
+                compileSdk 36
                 if (namespace == null) {
                     // flutter3.24使用gradle8,需设置namespace
                     namespace project.group
-                    //设置jdk版本
-                    compileOptions {
-                        sourceCompatibility JavaVersion.VERSION_1_8
-                        targetCompatibility JavaVersion.VERSION_1_8
-                    }
-                    //设置kotlin jdk版本
-                    if (project.android.hasProperty('kotlinOptions')) {
-                        kotlinOptions {
-                            jvmTarget = "1.8"
-                        }
+                }
+                //设置jdk版本
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+        }
+
+        ///
+        /// 统一 Kotlin 编译目标为 17。
+        /// 部分插件自带 Kotlin 1.8.x 并把 jvmTarget 写死为 11,
+        /// 需在其自身 build.gradle 评估之后覆盖,否则与 Java 目标不一致会导致编译失败。
+        /// Kotlin 1.8 使用 android.kotlinOptions,Kotlin 2.x 改用 compilerOptions。
+        ///
+        try {
+            if (project.hasProperty('android') && project.android.hasProperty('kotlinOptions')) {
+                project.android.kotlinOptions.jvmTarget = '17'
+            }
+        } catch (Exception e) {
+            logger.warn("设置 ${project.name} 的 kotlinOptions.jvmTarget 失败: ${e.message}")
+        }
+        try {
+            if (project.plugins.hasPlugin('org.jetbrains.kotlin.android')) {
+                project.extensions.configure(org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension) { ext ->
+                    if (ext.metaClass.respondsTo(ext, 'getCompilerOptions')) {
+                        ext.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
                     }
                 }
             }
+        } catch (Exception e) {
+            logger.warn("设置 ${project.name} 的 compilerOptions.jvmTarget 失败: ${e.message}")
+        }
+
+        ///
+        /// 部分插件直接在 KotlinCompile 任务上写死 jvmTarget(如 workmanager 写成 1.8),
+        /// 任务级配置优先级高于项目级,需再统一覆盖一次
+        ///
+        try {
+            project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { t ->
+                t.kotlinOptions.jvmTarget = '17'
+            }
+        } catch (Exception e) {
+            logger.warn("设置 ${project.name} 的 KotlinCompile.jvmTarget 失败: ${e.message}")
         }
     }
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

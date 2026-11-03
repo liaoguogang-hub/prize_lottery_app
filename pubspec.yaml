@@ -54,7 +54,8 @@ dependencies:
   # graphic charts
   graphic: ^2.4.0
   # upgrade
-  r_upgrade: ^0.4.2
+  r_upgrade:
+    path: third_party/r_upgrade
   # android id
   android_id: ^0.4.0
   # animation
@@ -98,7 +99,8 @@ dependencies:
   # adapter screen util
   flutter_screenutil: ^5.9.3
   # image gallery saver
-  image_gallery_saver: ^2.0.3
+  image_gallery_saver:
+    path: third_party/image_gallery_saver
   # shared_preferences storage
   shared_preferences: ^2.3.1
   # cached image
@@ -126,10 +128,14 @@ dependencies:
   # calendar event
   #  device_calendar: ^4.3.1
   device_calendar:
-    path: D:/flutter/device_calendar
+    path: third_party/device_calendar
   # custom liquid_swipe
   liquid_swipe:
-    path: D:/flutter/liquid_swipe_flutter
+    path: third_party/liquid_swipe_flutter
+  # 本地通知,用于开奖核奖提醒
+  flutter_local_notifications: ^18.0.1
+  # Android 周期任务,用于定期拉取开奖并核奖
+  workmanager: ^0.6.0
 
 dependency_overrides:
   collection: ^1.19.1
@@ -164,6 +170,7 @@ flutter:
     - assets/images/
     - assets/audios/
     - assets/lotties/
+    - assets/data/
     - assets/images/bars/
     - assets/images/icons/
     - assets/images/home/

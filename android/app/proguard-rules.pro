@@ -28,3 +28,11 @@
 -dontwarn com.ksad.**
 -dontwarn aegon.chrome.**
 #快手
+
+#Flutter 延迟组件依赖的 Play Core,本应用不发布到 Google Play,仅忽略告警
+-dontwarn com.google.android.play.core.**
+-keep class io.flutter.embedding.engine.deferredcomponents.** { *; }
+
+#jsoup 等三方库引用的 javax 注解
+-dontwarn javax.annotation.**
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod

@@ -7,6 +7,11 @@ class Storage {
   late final SharedPreferences _prefs;
 
   ///
+  /// 是否已完成初始化
+  ///
+  bool _initialized = false;
+
+  ///
   static Storage? _instance;
 
   factory Storage() {
@@ -17,7 +22,12 @@ class Storage {
   Storage._internal();
 
   Future<void> initialize() async {
+    ///重复初始化会抛出 LateInitializationError,这里做成幂等
+    if (_initialized) {
+      return;
+    }
     _prefs = await SharedPreferences.getInstance();
+    _initialized = true;
   }
 
   /// put object.

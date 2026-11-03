@@ -232,4 +232,7 @@ class AppRoutes {
   ///
   static const pl5Item = '/pl5/item/:type';
   static const pl5Omit = '/pl5/omit/:type';
+
+  ///双色球助手(机选/预测/开奖/我的彩票)
+  static const ssqAssistant = '/ssq/assistant';
 }

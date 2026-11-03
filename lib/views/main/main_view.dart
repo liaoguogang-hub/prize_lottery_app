@@ -9,6 +9,7 @@ import 'package:prize_lottery_app/views/home/pages/home_center_view.dart';
 import 'package:prize_lottery_app/views/lottery/pages/lottery_center_view.dart';
 import 'package:prize_lottery_app/views/main/main_controller.dart';
 import 'package:prize_lottery_app/views/master/pages/master_center_view.dart';
+import 'package:prize_lottery_app/views/ssq/pages/ssq_assistant_view.dart';
 import 'package:prize_lottery_app/views/user/pages/user_center_view.dart';
 
 class MainView extends StatefulWidget {
@@ -27,6 +28,7 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
     const LotteryCenterView(),
     const MasterCenterView(),
     const UserCenterView(),
+    const SsqAssistantView(),
   ];
 
   ///
@@ -53,6 +55,11 @@ class _MainViewState extends State<MainView> with WidgetsBindingObserver {
         icon: Image.asset(R.ucenter, width: 25, height: 25),
         activeIcon: Image.asset(R.ucenterOn, width: 25, height: 25),
         label: '我的',
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.confirmation_number_rounded, size: 25),
+        activeIcon: const Icon(Icons.confirmation_number_rounded, size: 25),
+        label: '助手',
       ),
     ];
   }

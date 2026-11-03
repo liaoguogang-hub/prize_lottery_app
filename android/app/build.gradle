@@ -11,18 +11,23 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+/// 是否具备正式签名所需的密钥库配置
+def hasReleaseKeystore = keystoreProperties.getProperty('storeFile') != null
+
 android {
     namespace = "com.prize.lottery.prize_lottery_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        // flutter_local_notifications 依赖 java.time,需开启核心库脱糖
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17
     }
 
     defaultConfig {
@@ -43,27 +48,9 @@ android {
         manifestPlaceholders = [applicationName   : "android.app.Application",
                                 OPENINSTALL_APPKEY: "ckfbxj",]
 
-        splits {
-            abi {
-                def isRelease = false
-                gradle.startParameter.taskNames.find {
-                    if (it ==~ /assemble.*Release/) {
-                        isRelease = true
-                        return true
-                    }
-                    return false
-                }
-                // 设为true，才能启用abi拆分机制在打包时根据架构生成不同的apk文件
-                enable isRelease
-                //将要包含的abi列表重置为空字符串（与include一起指示使用哪个 abi 而不是忽略哪些abi）
-                reset()
-                // 设置所有要支持的abi类型，构建多个包，每个包只包含一个架构的so
-                include 'armeabi-v7a', 'arm64-v8a'
-                // true：构建支持所有平台abi类型，构建一个包，包含多个架构的so(只要代码中有的都会打进去)
-                // 注：release打包flutter3.22.3版本设置为false，debug测试打包需要设置成true
-                universalApk !isRelease
-            }
-        }
+
+        // Flutter 3.44 会注入 ndk.abiFilters,再配置 splits.abi 会与之冲突,
+        // 需要按架构分包时改用 flutter build apk --split-per-abi
 
     }
 
@@ -73,10 +60,13 @@ android {
             v2SigningEnabled true
         }
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            // 缺少密钥库配置时回退到调试签名,保证本地可出包
+            if (hasReleaseKeystore) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
             v1SigningEnabled true
             v2SigningEnabled true
         }
@@ -92,7 +82,7 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             debuggable false
-            signingConfig signingConfigs.release
+            signingConfig hasReleaseKeystore ? signingConfigs.release : signingConfigs.debug
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -106,5 +96,5 @@ flutter {
 
 dependencies {
 
-    implementation 'com.android.support:multidex:1.0.3'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }

@@ -8,6 +8,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:prize_lottery_app/app/app_controller.dart';
+import 'package:prize_lottery_app/app/prize_watcher.dart';
 import 'package:prize_lottery_app/env/env_profile.dart';
 import 'package:prize_lottery_app/resources/assets_cache.dart';
 import 'package:prize_lottery_app/routes/names.dart';
@@ -152,6 +153,9 @@ class MainAppState extends State<MainApp> {
     ///线程初始化
     workerManager.log = Profile.props.debug;
     workerManager.init(isolatesCount: 2);
+
+    ///定期核奖任务与本地通知初始化
+    PrizeWatcher.initialize();
 
     ///第一帧渲染后初始化操作
     WidgetsBinding.instance.addPostFrameCallback((_) async {

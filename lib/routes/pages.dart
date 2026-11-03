@@ -199,6 +199,7 @@ import 'package:prize_lottery_app/views/shrink/pages/ssq_shrink_view.dart';
 import 'package:prize_lottery_app/views/skill/pages/skill_detaill_view.dart';
 import 'package:prize_lottery_app/views/skill/pages/skill_list_view.dart';
 import 'package:prize_lottery_app/views/splash/splash_view.dart';
+import 'package:prize_lottery_app/views/ssq/pages/ssq_assistant_view.dart';
 import 'package:prize_lottery_app/views/user/bindings/about_account_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/feedback_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/message_center_bindings.dart';
@@ -246,6 +247,10 @@ class AppPages {
       name: AppRoutes.splash,
       transition: Transition.noTransition,
       page: () => const SplashView(),
+    ),
+    GetPage(
+      name: AppRoutes.ssqAssistant,
+      page: () => const SsqAssistantView(),
     ),
     GetPage(
       name: AppRoutes.main,
