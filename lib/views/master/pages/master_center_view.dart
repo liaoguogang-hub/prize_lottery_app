@@ -4,12 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:prize_lottery_app/env/env_profile.dart';
 import 'package:prize_lottery_app/resources/colors.dart';
 import 'package:prize_lottery_app/resources/styles.dart';
-import 'package:prize_lottery_app/views/master/pages/center/dlt_master_view.dart';
-import 'package:prize_lottery_app/views/master/pages/center/fc3d_master_view.dart';
-import 'package:prize_lottery_app/views/master/pages/center/focus_master_view.dart';
-import 'package:prize_lottery_app/views/master/pages/center/pl3_master_view.dart';
-import 'package:prize_lottery_app/views/master/pages/center/qlc_master_view.dart';
-import 'package:prize_lottery_app/views/master/pages/center/ssq_master_view.dart';
+import 'package:prize_lottery_app/views/master/pages/master_local_view.dart';
 import 'package:prize_lottery_app/views/master/widgets/search_header.dart';
 import 'package:prize_lottery_app/widgets/custom_scroll_behavior.dart';
 
@@ -27,7 +22,7 @@ class MasterCenterViewState extends State<MasterCenterView>
   ///
   /// tab选项
   final List<String> _tabs = [
-    '关 注',
+    '全部工具',
     '双色球',
     '大乐透',
     '福彩3D',
@@ -38,12 +33,12 @@ class MasterCenterViewState extends State<MasterCenterView>
   ///
   /// tab选项页面
   final List<Widget> _pages = [
-    const FocusMasterView(),
-    const SsqMasterView(),
-    const DltMasterView(),
-    const Fc3dMasterView(),
-    const Pl3MasterView(),
-    const QlcMasterView(),
+    const LocalToolsView(),
+    const LotteryToolsView(type: 'ssq'),
+    const LotteryToolsView(type: 'dlt'),
+    const LotteryToolsView(type: 'fc3d'),
+    const LotteryToolsView(type: 'pl3'),
+    const LotteryToolsView(type: 'qlc'),
   ];
 
   ///

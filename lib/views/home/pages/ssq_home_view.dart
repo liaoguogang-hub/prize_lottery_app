@@ -82,6 +82,92 @@ class SsqHomeViewState extends State<SsqHomeView>
   }
 
   Widget _buildChannelView() {
+    List<Widget> buttons = [
+      if (AppFeatures.serverFeaturesEnabled)
+        ChannelButton(
+          text: '专家PK',
+          icon: R.pkAnalyzeIcon,
+          size: 36.w,
+          callback: () {
+            Get.toNamed(AppRoutes.ssqBattle);
+          },
+        ),
+      if (AppFeatures.serverFeaturesEnabled)
+        ChannelButton(
+          text: '号码预警',
+          icon: R.alertAnalyzeIcon,
+          size: 36.w,
+          callback: () {
+            Get.toNamed(AppRoutes.ssqAnaCensus);
+          },
+        ),
+      ChannelButton(
+                        text: '综合分析',
+                        icon: R.zongheAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.ssqVipCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '号码走势',
+        icon: R.trendAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed('/ssq/trend/0');
+        },
+      ),
+      if (AppFeatures.serverFeaturesEnabled)
+        ChannelButton(
+          text: '热点分析',
+          icon: R.hotAnalyzeIcon,
+          size: 36.w,
+          callback: () {
+            Get.toNamed(AppRoutes.ssqHotCensus);
+          },
+        ),
+      ChannelButton(
+        text: '缩水过滤',
+        icon: R.filterAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.ssqShrink);
+        },
+      ),
+      ChannelButton(
+                        text: '臻选牛人',
+                        icon: R.masterAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.ssqRateCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '奖金计算',
+        icon: R.calcAnalyzeIcon,
+        size: 36.w,
+        margin: EdgeInsets.zero,
+        callback: () {
+          Get.toNamed(AppRoutes.ssqCalculator);
+        },
+      ),
+      ChannelButton(
+                        text: '整体分析',
+                        icon: R.chartAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.ssqFullCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '历史开奖',
+        icon: R.historyAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed('/lotto/history/ssq');
+        },
+      ),
+    ];
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
       child: Container(
@@ -90,131 +176,13 @@ class SsqHomeViewState extends State<SsqHomeView>
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.w),
         ),
-        child: Row(children: [
-          Expanded(
-            child: Column(
-              children: [
-                if (AppFeatures.serverFeaturesEnabled)
-                  ChannelButton(
-                    text: '专家PK',
-                    icon: R.pkAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.ssqBattle);
-                    },
-                  ),
-
-                if (AppFeatures.serverFeaturesEnabled)
-                  ChannelButton(
-                    text: '号码预警',
-                    icon: R.alertAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.ssqAnaCensus);
-                    },
-                  ),
-
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-ChannelButton(
-                  text: '综合分析',
-                  icon: R.zongheAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.ssqVipCensus);
-                  },
-                ),
-
-
-                ChannelButton(
-                  text: '号码走势',
-                  icon: R.trendAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed('/ssq/trend/0');
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                if (AppFeatures.serverFeaturesEnabled)
-                  ChannelButton(
-                    text: '热点分析',
-                    icon: R.hotAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.ssqHotCensus);
-                    },
-                  ),
-
-                ChannelButton(
-                  text: '缩水过滤',
-                  icon: R.filterAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.ssqShrink);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-ChannelButton(
-                  text: '臻选牛人',
-                  icon: R.masterAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.ssqRateCensus);
-                  },
-                ),
-
-
-                ChannelButton(
-                  text: '奖金计算',
-                  icon: R.calcAnalyzeIcon,
-                  size: 36.w,
-                  margin: EdgeInsets.zero,
-                  callback: () {
-                    Get.toNamed(AppRoutes.ssqCalculator);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-ChannelButton(
-                  text: '整体分析',
-                  icon: R.chartAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.ssqFullCensus);
-                  },
-                ),
-
-
-                ChannelButton(
-                  text: '历史开奖',
-                  icon: R.historyAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed('/lotto/history/ssq');
-                  },
-                ),
-              ],
-            ),
-          ),
-        ]),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          runSpacing: 6.w,
+          children: buttons
+              .map((e) => SizedBox(width: Get.width / 4, child: e))
+              .toList(),
+        ),
       ),
     );
   }

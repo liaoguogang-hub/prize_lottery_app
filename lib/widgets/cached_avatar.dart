@@ -44,6 +44,31 @@ class CachedAvatar extends StatelessWidget {
         ),
       );
     }
+    ///
+    /// 随包打包的本地资源(服务端不可用时的兜底)
+    ///
+    if (url.startsWith('assets/')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Opacity(
+          opacity: opacity,
+          child: Image.asset(
+          url,
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (context, error, stack) => Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(radius),
+            ),
+          ),
+          ),
+        ),
+      );
+    }
     return CachedNetworkImage(
       imageUrl: url,
       width: width,

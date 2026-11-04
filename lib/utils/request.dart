@@ -142,6 +142,14 @@ class HttpRequest {
           message: '连接错误',
           path: error.requestOptions.path,
         );
+      case DioExceptionType.transformTimeout:
+
+        ///响应转换超时
+        return ResponseError(
+          code: -1,
+          message: '响应超时',
+          path: error.requestOptions.path,
+        );
       case DioExceptionType.sendTimeout:
 
         ///请求超时

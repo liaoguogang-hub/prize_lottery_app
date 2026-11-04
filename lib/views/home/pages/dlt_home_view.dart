@@ -80,6 +80,92 @@ class DltHomeViewState extends State<DltHomeView>
   }
 
   Widget _buildChannelView() {
+    List<Widget> buttons = [
+                    if (AppFeatures.serverFeaturesEnabled)
+      ChannelButton(
+                        text: '专家PK',
+                        icon: R.pkAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.dltBattle);
+                        },
+                      ),
+                    if (AppFeatures.serverFeaturesEnabled)
+      ChannelButton(
+                        text: '号码预警',
+                        icon: R.alertAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.dltAnaCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '综合分析',
+        icon: R.zongheAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.dltVipCensus);
+        },
+      ),
+      ChannelButton(
+        text: '号码走势',
+        icon: R.trendAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed('/dlt/trend/0');
+        },
+      ),
+                    if (AppFeatures.serverFeaturesEnabled)
+      ChannelButton(
+                        text: '热点分析',
+                        icon: R.hotAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.dltHotCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '缩水过滤',
+        icon: R.filterAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.dltShrink);
+        },
+      ),
+      ChannelButton(
+        text: '臻选牛人',
+        icon: R.masterAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.dltRateCensus);
+        },
+      ),
+      ChannelButton(
+        text: '奖金计算',
+        icon: R.calcAnalyzeIcon,
+        size: 36.w,
+        margin: EdgeInsets.zero,
+        callback: () {
+          Get.toNamed(AppRoutes.dltCalculator);
+        },
+      ),
+      ChannelButton(
+        text: '整体分析',
+        icon: R.chartAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.dltFullCensus);
+        },
+      ),
+      ChannelButton(
+        text: '历史开奖',
+        icon: R.historyAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed('/lotto/history/dlt');
+        },
+      ),
+    ];
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
       child: Container(
@@ -88,125 +174,13 @@ class DltHomeViewState extends State<DltHomeView>
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.w),
         ),
-        child: Row(children: [
-          Expanded(
-            child: Column(
-              children: [
-                if (AppFeatures.serverFeaturesEnabled)
-  ChannelButton(
-                    text: '专家PK',
-                    icon: R.pkAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.dltBattle);
-                    },
-                  ),
-
-                if (AppFeatures.serverFeaturesEnabled)
-  ChannelButton(
-                    text: '号码预警',
-                    icon: R.alertAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.dltAnaCensus);
-                    },
-                  ),
-
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                ChannelButton(
-                  text: '综合分析',
-                  icon: R.zongheAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltVipCensus);
-                  },
-                ),
-                ChannelButton(
-                  text: '号码走势',
-                  icon: R.trendAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed('/dlt/trend/0');
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                if (AppFeatures.serverFeaturesEnabled)
-  ChannelButton(
-                    text: '热点分析',
-                    icon: R.hotAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.dltHotCensus);
-                    },
-                  ),
-
-                ChannelButton(
-                  text: '缩水过滤',
-                  icon: R.filterAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltShrink);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                ChannelButton(
-                  text: '臻选牛人',
-                  icon: R.masterAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltRateCensus);
-                  },
-                ),
-                ChannelButton(
-                  text: '奖金计算',
-                  icon: R.calcAnalyzeIcon,
-                  size: 36.w,
-                  margin: EdgeInsets.zero,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltCalculator);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                ChannelButton(
-                  text: '整体分析',
-                  icon: R.chartAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltFullCensus);
-                  },
-                ),
-                ChannelButton(
-                  text: '历史开奖',
-                  icon: R.historyAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed('/lotto/history/dlt');
-                  },
-                ),
-              ],
-            ),
-          ),
-        ]),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          runSpacing: 6.w,
+          children: buttons
+              .map((e) => SizedBox(width: Get.width / 4, child: e))
+              .toList(),
+        ),
       ),
     );
   }

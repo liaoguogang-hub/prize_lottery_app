@@ -14,6 +14,32 @@ if (keystorePropertiesFile.exists()) {
 /// 是否具备正式签名所需的密钥库配置
 def hasReleaseKeystore = keystoreProperties.getProperty('storeFile') != null
 
+
+///
+/// 版本号直接取自 pubspec.yaml
+///
+/// Flutter 3.44 不再向 local.properties 写入 flutter.versionCode,
+/// 直接依赖该字段会导致 versionCode 恒为 1、versionName 取到旧值。
+///
+def pubspecVersionName = "1.0.0"
+def pubspecVersionCode = 1
+def pubspecText = rootProject.file("../pubspec.yaml").text
+def versionMatcher = (pubspecText =~ /(?m)^version:\s*([0-9]+(?:\.[0-9]+)*)\s*$/)
+if (versionMatcher.find()) {
+    pubspecVersionName = versionMatcher.group(1)
+    def versionParts = pubspecVersionName.tokenize('.')
+    if (versionParts.size() >= 3) {
+        pubspecVersionCode = versionParts[0].toInteger() * 1000000 +
+                versionParts[1].toInteger() * 1000 +
+                versionParts[2].toInteger()
+    } else if (versionParts.size() == 2) {
+        pubspecVersionCode = versionParts[0].toInteger() * 1000 +
+                versionParts[1].toInteger()
+    } else {
+        pubspecVersionCode = versionParts[0].toInteger()
+    }
+}
+
 android {
     namespace = "com.prize.lottery.prize_lottery_app"
     compileSdk = flutter.compileSdkVersion
@@ -37,8 +63,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = pubspecVersionCode
+        versionName = pubspecVersionName
         multiDexEnabled = true
 
         //应用打包名前缀

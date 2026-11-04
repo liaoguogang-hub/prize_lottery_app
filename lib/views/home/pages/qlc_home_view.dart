@@ -70,6 +70,92 @@ class QlcHomeViewState extends State<QlcHomeView>
   }
 
   Widget _buildChannelView() {
+    List<Widget> buttons = [
+                    if (AppFeatures.serverFeaturesEnabled)
+      ChannelButton(
+                        text: '专家PK',
+                        icon: R.pkAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.qlcBattle);
+                        },
+                      ),
+                    if (AppFeatures.serverFeaturesEnabled)
+      ChannelButton(
+                        text: '号码预警',
+                        icon: R.alertAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.qlcAnaCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '综合分析',
+        icon: R.zongheAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.qlcVipCensus);
+        },
+      ),
+      ChannelButton(
+        text: '号码走势',
+        icon: R.trendAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed('/qlc/trend/0');
+        },
+      ),
+                    if (AppFeatures.serverFeaturesEnabled)
+      ChannelButton(
+                        text: '热点分析',
+                        icon: R.hotAnalyzeIcon,
+                        size: 36.w,
+                        callback: () {
+                          Get.toNamed(AppRoutes.qlcHotCensus);
+                        },
+                      ),
+      ChannelButton(
+        text: '缩水过滤',
+        icon: R.filterAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.qlcShrink);
+        },
+      ),
+      ChannelButton(
+        text: '臻选牛人',
+        icon: R.masterAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.qlcRateCensus);
+        },
+      ),
+      ChannelButton(
+        text: '奖金计算',
+        icon: R.calcAnalyzeIcon,
+        size: 36.w,
+        margin: EdgeInsets.zero,
+        callback: () {
+          Get.toNamed(AppRoutes.qlcCalculator);
+        },
+      ),
+      ChannelButton(
+        text: '整体分析',
+        icon: R.chartAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed(AppRoutes.qlcFullCensus);
+        },
+      ),
+      ChannelButton(
+        text: '历史开奖',
+        icon: R.historyAnalyzeIcon,
+        size: 36.w,
+        callback: () {
+          Get.toNamed('/lotto/history/qlc');
+        },
+      ),
+    ];
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
       child: Container(
@@ -78,125 +164,13 @@ class QlcHomeViewState extends State<QlcHomeView>
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.w),
         ),
-        child: Row(children: [
-          Expanded(
-            child: Column(
-              children: [
-                if (AppFeatures.serverFeaturesEnabled)
-  ChannelButton(
-                    text: '专家PK',
-                    icon: R.pkAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.qlcBattle);
-                    },
-                  ),
-
-                if (AppFeatures.serverFeaturesEnabled)
-  ChannelButton(
-                    text: '号码预警',
-                    icon: R.alertAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.qlcAnaCensus);
-                    },
-                  ),
-
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                ChannelButton(
-                  text: '综合分析',
-                  icon: R.zongheAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcVipCensus);
-                  },
-                ),
-                ChannelButton(
-                  text: '号码走势',
-                  icon: R.trendAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed('/qlc/trend/0');
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                if (AppFeatures.serverFeaturesEnabled)
-  ChannelButton(
-                    text: '热点分析',
-                    icon: R.hotAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.qlcHotCensus);
-                    },
-                  ),
-
-                ChannelButton(
-                  text: '缩水过滤',
-                  icon: R.filterAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcShrink);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                ChannelButton(
-                  text: '臻选牛人',
-                  icon: R.masterAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcRateCensus);
-                  },
-                ),
-                ChannelButton(
-                  text: '奖金计算',
-                  icon: R.calcAnalyzeIcon,
-                  size: 36.w,
-                  margin: EdgeInsets.zero,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcCalculator);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                ChannelButton(
-                  text: '整体分析',
-                  icon: R.chartAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcFullCensus);
-                  },
-                ),
-                ChannelButton(
-                  text: '历史开奖',
-                  icon: R.historyAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed('/lotto/history/qlc');
-                  },
-                ),
-              ],
-            ),
-          ),
-        ]),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          runSpacing: 6.w,
+          children: buttons
+              .map((e) => SizedBox(width: Get.width / 4, child: e))
+              .toList(),
+        ),
       ),
     );
   }

@@ -10,6 +10,20 @@
 > 注:1.0.0 ~ 1.2.0 三个版本发布时 `pubspec.yaml` 的版本号尚未同步,包内 `versionName` 均为 `1.0.0`。
 > 自 1.3.0 起版本号与 Git 标签严格一致,并由 `tool/release.sh` 统一维护。
 
+## [1.3.1] - 2026-11-04
+
+### 修复
+
+- 首页功能入口图标显示为空白圆圈:上游的 `*_analyze_icon` 系列图标只由服务端 CDN 下发,
+  `icaiwa.com` 整族域名下线后必然加载失败。现随包生成一套本地图标作为兜底
+  (`assets/images/icons/`),`ResourceStore` 在服务端不可用时自动回退
+- 首页功能入口排版错乱:原先固定 5 列 `Row` + `Expanded`,隐藏部分入口后会留下空列且末行错位,
+  改为 `Wrap` 自适应流式布局
+- 「专家」页签空白:该页原为服务端上的专家账号与推荐方案,无服务端则无内容。
+  改为**本地选号工具聚合页**,按彩种列出完全本地可用的综合分析、号码走势、缩水过滤、
+  奖金计算、历史开奖
+- 补齐 Dio 新增的 `transformTimeout` 异常分支(原 `switch` 未穷尽,运行时抛错)
+
 ## [1.3.0] - 2026-11-04
 
 ### 新增
@@ -73,6 +87,7 @@
 - `tool/verify_core.dart`:核心算法验证脚本(49 项断言)
 - `third_party/`:修补后的本地依赖内置,仓库可独立克隆构建
 
+[1.3.1]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.1
 [1.3.0]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.0
 [1.2.0]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.2.0
 [1.1.0]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.1.0
