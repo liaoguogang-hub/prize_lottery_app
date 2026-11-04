@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/base/controller/request_controller.dart';
 import 'package:prize_lottery_app/views/lottery/model/lottery_detail.dart';
 import 'package:prize_lottery_app/views/lottery/repository/lottery_info_repository.dart';
@@ -53,8 +54,11 @@ class LotteryDetailController extends AbsRequestController {
     //开奖详情
     Future<LotteryDetail> lotteryFuture =
         LotteryInfoRepository.lotteryDetail(type: type, period: period);
-    //随机推荐专家
-    Future<List<RandomMaster>> masterFuture = recommendCalls[type]!();
+    //随机推荐专家(离线模式下无服务端推荐,直接返回空)
+    Future<List<RandomMaster>> masterFuture =
+        AppFeatures.serverFeaturesEnabled
+            ? recommendCalls[type]!()
+            : Future<List<RandomMaster>>.value(<RandomMaster>[]);
 
     ///
     Future.wait([lotteryFuture, masterFuture]).then((values) {

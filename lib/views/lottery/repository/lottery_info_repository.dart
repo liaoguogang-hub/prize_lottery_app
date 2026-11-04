@@ -1,6 +1,7 @@
 import 'package:prize_lottery_app/base/model/page_result.dart';
 import 'package:prize_lottery_app/utils/diagrams_table.dart';
 import 'package:prize_lottery_app/utils/hunt_table.dart';
+import 'package:prize_lottery_app/data/official/local_omit_calculator.dart';
 import 'package:prize_lottery_app/data/official/official_lottery_api.dart';
 import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/utils/request.dart';
@@ -164,7 +165,56 @@ class LotteryInfoRepository {
   ///
   /// 查询开奖信息详情
   static Future<LotteryDetail> lotteryDetail(
-      {required String type, required String period}) {
+      {required String type, required String period}) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      Map<String, dynamic>? raw =
+          await OfficialLotteryApi().rawDraw(type, period);
+      if (raw == null) {
+        throw Exception('未找到该期开奖数据');
+      }
+      List grades = raw['grades'] as List? ?? [];
+      int total = 0;
+      List<Map<String, dynamic>> levels = [];
+      for (dynamic g in grades) {
+        int level = g['type'] as int;
+        int count = g['count'] as int;
+        int money = g['money'] as int;
+        if (level <= 0) {
+          continue;
+        }
+        total += count * money;
+        levels.add({
+          'type': type,
+          'period': period,
+          'level': level,
+          'quantity': count,
+          'bonus': money.toDouble(),
+          'amount': (count * money).toDouble(),
+        });
+      }
+      return LotteryDetail.fromJson({
+        'lottery': {
+          'type': type,
+          'period': period,
+          'red': raw['red'],
+          'blue': raw['blue'],
+          'shi': '',
+          'kai': '',
+          'lotDate': raw['date'],
+          'com': '',
+          'last': '',
+          'lastDelta': 0,
+        },
+        'award': {
+          'type': type,
+          'period': period,
+          'sales': '${raw['sales']}',
+          'award': '$total',
+          'pool': '${raw['pool']}',
+        },
+        'levels': levels,
+      });
+    }
     return HttpRequest()
         .get('/slotto/share/lotto/$type/$period')
         .then((value) => LotteryDetail.fromJson(value.data));
@@ -207,7 +257,17 @@ class LotteryInfoRepository {
 
   ///
   /// 查询彩种的遗漏数据
-  static Future<List<LotteryOmit>> lotteryOmits(String type, int? size) {
+  static Future<List<LotteryOmit>> lotteryOmits(String type, int? size) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      int limit = size ?? 50;
+      List<LotteryInfo> draws =
+          await OfficialLotteryApi().latestList(type, limit: limit);
+      ///
+      /// 官方接口按新到旧返回,遗漏需要按时间正序累计
+      ///
+      List<LotteryInfo> ascending = draws.reversed.toList();
+      return LocalOmitCalculator.build(type, ascending);
+    }
     return HttpRequest().get('/slotto/share/lotto/omit/$type',
         params: {'size': size}).then((value) {
       List result = value.data;

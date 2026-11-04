@@ -214,6 +214,104 @@ class OfficialLotteryApi {
     return list;
   }
 
+
+  ///
+  /// 拉取指定期的官方原始数据(含奖级、销量、奖池)
+  ///
+  /// 官方接口不支持按期号精确查询,按最近期数倒查,未命中返回 null
+  ///
+  Future<Map<String, dynamic>?> rawDraw(String type, String period) async {
+    if (_cwlNames.containsKey(type)) {
+      Response response = await _dio.get(
+        cwlUrl,
+        queryParameters: {'name': _cwlNames[type], 'issueCount': 120},
+      );
+      dynamic body = response.data;
+      if (body is! Map) return null;
+      for (dynamic row in (body['result'] as List? ?? [])) {
+        if (row is Map && '${row['code']}' == period) {
+          return _mapCwlRaw(type, row);
+        }
+      }
+      return null;
+    }
+    if (_sportteryGames.containsKey(type)) {
+      for (int page = 1; page <= 6; page++) {
+        Response response = await _dio.get(
+          sportteryUrl,
+          queryParameters: {
+            'gameNo': _sportteryGames[type],
+            'provinceId': '0',
+            'pageSize': '30',
+            'isVerify': '1',
+            'pageNo': '$page',
+          },
+        );
+        dynamic body = response.data;
+        if (body is! Map) return null;
+        dynamic value = body['value'];
+        if (value is! Map) return null;
+        for (dynamic row in (value['list'] as List? ?? [])) {
+          if (row is Map && '${row['lotteryDrawNum']}' == period) {
+            return _mapSportteryRaw(type, row);
+          }
+        }
+      }
+      return null;
+    }
+    return null;
+  }
+
+  ///
+  /// 把福彩原始记录整理成上游详情所需的字段
+  ///
+  Map<String, dynamic> _mapCwlRaw(String type, Map row) {
+    List grades = row['prizegrades'] as List? ?? [];
+    return {
+      'period': '${row['code'] ?? ''}',
+      'red': _formatBalls('${row['red'] ?? ''}'),
+      'blue': _formatBalls('${row['blue'] ?? ''}'),
+      'date': _formatDate('${row['date'] ?? ''}'),
+      'sales': int.tryParse('${row['sales'] ?? 0}') ?? 0,
+      'pool': int.tryParse('${row['poolmoney'] ?? 0}') ?? 0,
+      'grades': grades
+          .map((e) => {
+                'type': int.tryParse('${e['type'] ?? 0}') ?? 0,
+                'count': int.tryParse('${e['typenum'] ?? 0}') ?? 0,
+                'money': int.tryParse('${e['typemoney'] ?? 0}') ?? 0,
+              })
+          .toList(),
+    };
+  }
+
+  ///
+  /// 把体彩原始记录整理成上游详情所需的字段
+  ///
+  Map<String, dynamic> _mapSportteryRaw(String type, Map row) {
+    List<String> balls = '${row['lotteryDrawResult'] ?? ''}'
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((e) => e.isNotEmpty)
+        .toList();
+    String red;
+    String blue = '';
+    if (type == 'dlt' && balls.length >= 7) {
+      red = balls.sublist(0, 5).map((e) => e.padLeft(2, '0')).join(' ');
+      blue = balls.sublist(5).map((e) => e.padLeft(2, '0')).join(' ');
+    } else {
+      red = balls.join(' ');
+    }
+    return {
+      'period': '${row['lotteryDrawNum'] ?? ''}',
+      'red': red,
+      'blue': blue,
+      'date': _formatDate('${row['lotteryDrawTime'] ?? ''}'.split(' ').first),
+      'sales': 0,
+      'pool': 0,
+      'grades': <Map<String, dynamic>>[],
+    };
+  }
+
   ///
   /// 把 "09,10,13" 或 "12 13 23" 统一成 "09 10 13" 形式的两位数空格串
   ///
