@@ -10,6 +10,17 @@
 > 注:1.0.0 ~ 1.2.0 三个版本发布时 `pubspec.yaml` 的版本号尚未同步,包内 `versionName` 均为 `1.0.0`。
 > 自 1.3.0 起版本号与 Git 标签严格一致,并由 `tool/release.sh` 统一维护。
 
+## [1.3.3] - 2026-11-04
+
+### 修复
+
+- **浏览历史**:原页面读取服务端接口 `/ucenter/app/browse/...`,服务端下线后恒为空。
+  改为本机记录:新增 `BrowseHistoryStore`,由路由回调写入(最多 200 条、同页面去重),
+  列表页按期倒序展示,支持单条删除与清空
+- **使用指南**:原页面用 WebView 加载 `https://cdn.icaiwa.com/app/manual/manual_book.html`,
+  该域名已下线,页面永久空白。改为随包内置的说明内容,涵盖数据来源、助手用法、
+  核奖规则、分析工具与免责提示
+
 ## [1.3.2] - 2026-11-04
 
 ### 变更
@@ -101,6 +112,7 @@
 - `tool/verify_core.dart`:核心算法验证脚本(49 项断言)
 - `third_party/`:修补后的本地依赖内置,仓库可独立克隆构建
 
+[1.3.3]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.3
 [1.3.2]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.2
 [1.3.1]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.1
 [1.3.0]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.0

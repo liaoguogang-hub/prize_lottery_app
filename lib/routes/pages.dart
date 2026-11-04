@@ -160,7 +160,7 @@ import 'package:prize_lottery_app/views/pivot/pages/fc3d_pivot_view.dart';
 import 'package:prize_lottery_app/views/pivot/pages/pl3_pivot_view.dart';
 import 'package:prize_lottery_app/views/protocol/beian_miit_view.dart';
 import 'package:prize_lottery_app/views/protocol/credential_quality_view.dart';
-import 'package:prize_lottery_app/views/protocol/manual_book_view.dart';
+import 'package:prize_lottery_app/views/protocol/local_manual_view.dart';
 import 'package:prize_lottery_app/views/protocol/permission_list_view.dart';
 import 'package:prize_lottery_app/views/protocol/privacy_protocol_view.dart';
 import 'package:prize_lottery_app/views/protocol/usage_protocol_view.dart';
@@ -205,7 +205,6 @@ import 'package:prize_lottery_app/views/user/bindings/feedback_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/message_center_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/reset_password_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/user_balance_bindings.dart';
-import 'package:prize_lottery_app/views/user/bindings/user_browse_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/user_invite_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/user_login_bindings.dart';
 import 'package:prize_lottery_app/views/user/bindings/user_member_bindings.dart';
@@ -229,7 +228,7 @@ import 'package:prize_lottery_app/views/user/pages/records/withdraw_record_view.
 import 'package:prize_lottery_app/views/user/pages/reset_password_view.dart';
 import 'package:prize_lottery_app/views/user/pages/user_account_view.dart';
 import 'package:prize_lottery_app/views/user/pages/user_balance_view.dart';
-import 'package:prize_lottery_app/views/user/pages/user_browse_view.dart';
+import 'package:prize_lottery_app/views/user/pages/local_browse_view.dart';
 import 'package:prize_lottery_app/views/user/pages/user_feedback_view.dart';
 import 'package:prize_lottery_app/views/user/pages/user_login_view.dart';
 import 'package:prize_lottery_app/views/user/pages/user_sign_view.dart';
@@ -288,8 +287,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.browse,
-      page: () => const UserBrowseView(),
-      binding: UserBrowseBinding(),
+      page: () => const LocalBrowseView(),
       middlewares: [
         RouteAuthMiddleware(),
       ],
@@ -1484,7 +1482,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.manualBook,
-      page: () => const ManualBookView(),
+      page: () => const LocalManualView(),
       opaque: false,
     ),
     GetPage(
