@@ -10,6 +10,20 @@
 > 注:1.0.0 ~ 1.2.0 三个版本发布时 `pubspec.yaml` 的版本号尚未同步,包内 `versionName` 均为 `1.0.0`。
 > 自 1.3.0 起版本号与 Git 标签严格一致,并由 `tool/release.sh` 统一维护。
 
+## [1.3.2] - 2026-11-04
+
+### 变更
+
+「我的」页改造为展示真实数据,去掉全部依赖服务端的内容:
+
+- 顶部改为本地档案昵称(可点击修改),副标题说明数据保存在本机;移除消息入口
+- 四个账户数字(奖励金 / 金币 / 积分 / 代金券,恒为 0)替换为**我的彩票真实数据**:
+  全部记录 / 待开奖 / 已中奖 / 累计奖金
+- 「主要频道」改为「快捷入口」,指向 我的彩票 / 号码走势 / 历史开奖 / 选号工具
+- 「彩票助手」入口改指本地助手页(原指向服务端页面)
+- 未登录态点击不再跳转到无法完成的注册页,改为直接创建本地档案
+- 昵称改为监听本地档案,修改后即时刷新
+
 ## [1.3.1] - 2026-11-04
 
 ### 修复
@@ -87,6 +101,7 @@
 - `tool/verify_core.dart`:核心算法验证脚本(49 项断言)
 - `third_party/`:修补后的本地依赖内置,仓库可独立克隆构建
 
+[1.3.2]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.2
 [1.3.1]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.1
 [1.3.0]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.3.0
 [1.2.0]: https://github.com/liaoguogang-hub/prize_lottery_app/releases/tag/v1.2.0

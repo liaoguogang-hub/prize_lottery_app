@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:prize_lottery_app/resources/resources.dart';
 import 'package:prize_lottery_app/routes/names.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
 import 'package:prize_lottery_app/store/store.dart';
 import 'package:prize_lottery_app/utils/tools.dart';
 import 'package:prize_lottery_app/views/user/model/user_auth.dart';
-import 'package:prize_lottery_app/widgets/message_hint_view.dart';
 
 ///
 /// 垂直偏移量
@@ -170,16 +170,7 @@ class UCenterHeader extends SliverPersistentHeaderDelegate {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(AppRoutes.hintMessage);
-                        },
-                        behavior: HitTestBehavior.opaque,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          child: const MessageHintView(),
-                        ),
-                      )
+
                     ],
                   ),
                 ),
@@ -207,8 +198,17 @@ class UCenterHeader extends SliverPersistentHeaderDelegate {
   }
 
   Widget _authedView(AuthUser user, double shrinkOffset, double size) {
+    ///
+    /// 本地档案用户的手机号为空,展示昵称;已绑定手机号的用户仍展示脱敏号码
+    ///
+    String title = user.phone.isNotEmpty
+        ? Tools.encodeTel(user.phone)
+        : LocalProfile().nickname;
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        _showRenameDialog();
+      },
+      behavior: HitTestBehavior.opaque,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -220,18 +220,35 @@ class UCenterHeader extends SliverPersistentHeaderDelegate {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                Tools.encodeTel(user.phone),
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  color: shrinkColor(shrinkOffset, Colors.black87),
-                ),
+              Row(
+                children: [
+                  GetBuilder<LocalProfile>(builder: (profile) {
+                    String name = title.isNotEmpty && user.phone.isNotEmpty
+                        ? title
+                        : (profile.nickname.isNotEmpty
+                            ? profile.nickname
+                            : '本机用户');
+                    return Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: 22.sp,
+                        color: shrinkColor(shrinkOffset, Colors.black87),
+                      ),
+                    );
+                  }),
+                  SizedBox(width: 6.w),
+                  Icon(
+                    const IconData(0xe613, fontFamily: 'iconfont'),
+                    size: 12.w,
+                    color: shrinkColor(shrinkOffset, Colors.black26),
+                  ),
+                ],
               ),
               Text(
-                '凡彩为您的幸运而喝彩',
+                '数据保存在本机 · 点击可修改昵称',
                 style: TextStyle(
                   color: shrinkColor(shrinkOffset, Colors.black54),
-                  fontSize: 13.sp,
+                  fontSize: 12.sp,
                 ),
               )
             ],
@@ -241,10 +258,50 @@ class UCenterHeader extends SliverPersistentHeaderDelegate {
     );
   }
 
+  ///
+  /// 修改本地昵称
+  ///
+  void _showRenameDialog() {
+    TextEditingController controller =
+        TextEditingController(text: LocalProfile().nickname);
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.w),
+        ),
+        title: const Text('修改昵称'),
+        content: TextField(
+          controller: controller,
+          maxLength: 12,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: '请输入昵称',
+            counterText: '',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              LocalProfile().setNickname(controller.text);
+              Get.back();
+            },
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _unAuthedView(double shrinkOffset, double size) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(AppRoutes.login);
+        LocalProfile().initialize();
       },
       behavior: HitTestBehavior.opaque,
       child: Row(
@@ -259,17 +316,17 @@ class UCenterHeader extends SliverPersistentHeaderDelegate {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '快速登录',
+                '本机用户',
                 style: TextStyle(
-                  fontSize: 24.sp,
+                  fontSize: 22.sp,
                   color: shrinkColor(shrinkOffset, Colors.black87),
                 ),
               ),
               Text(
-                '凡彩为您的幸运而喝彩',
+                '数据保存在本机 · 无需注册',
                 style: TextStyle(
                   color: shrinkColor(shrinkOffset, Colors.black54),
-                  fontSize: 13.sp,
+                  fontSize: 12.sp,
                 ),
               )
             ],

@@ -6,10 +6,9 @@ import 'package:prize_lottery_app/resources/resources.dart';
 import 'package:prize_lottery_app/resources/styles.dart';
 import 'package:prize_lottery_app/routes/names.dart';
 import 'package:prize_lottery_app/utils/app_features.dart';
-import 'package:prize_lottery_app/store/balance.dart';
 import 'package:prize_lottery_app/store/member.dart';
+import 'package:prize_lottery_app/store/my_ticket.dart';
 import 'package:prize_lottery_app/views/user/controller/user_center_controller.dart';
-import 'package:prize_lottery_app/views/user/model/user_balance.dart';
 import 'package:prize_lottery_app/views/user/widgets/master_recommend_view.dart';
 import 'package:prize_lottery_app/views/user/widgets/ucenter_header.dart';
 import 'package:prize_lottery_app/widgets/animate_view.dart';
@@ -236,179 +235,54 @@ class UserCenterViewState extends State<UserCenterView>
 
   ///
   /// 账户余额面板
+  ///
+  /// 我的彩票数据面板
+  ///
   Widget _balanceAcctView() {
-    return GetBuilder<BalanceInstance>(
-      builder: (store) {
-        UserBalance? balance = store.balance;
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Get.toNamed('/balance/0');
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: 26.w,
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(bottom: 2.w),
-                    child: Text(
-                      '${balance != null ? balance.balance : 0}',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.black,
-                        fontFamily: 'bebas',
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '奖励金',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  Text(
-                    '可抵扣提现',
-                    style: TextStyle(fontSize: 10.sp, color: Colors.black38),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Get.toNamed('/balance/1');
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: 26.w,
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(bottom: 2.w),
-                    child: Text(
-                      '${balance != null ? balance.surplus : 0}',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.black,
-                        fontFamily: 'bebas',
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '金 币',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    '仅付费抵扣',
-                    style: TextStyle(fontSize: 10.sp, color: Colors.black38),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Get.toNamed(AppRoutes.sign);
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: 26.w,
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(bottom: 2.w),
-                    child: Text(
-                      '${balance != null ? balance.coupon : 0}',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.black,
-                        fontFamily: 'bebas',
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '积 分',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    '兑换金币',
-                    style: TextStyle(fontSize: 10.sp, color: Colors.black38),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Get.toNamed(AppRoutes.voucher);
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: 26.w,
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(bottom: 2.w),
-                    child: Text(
-                      '${balance != null ? balance.voucher : 0}',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.black,
-                        fontFamily: 'bebas',
-                      ),
-                    ),
-                  ),
-                  Text(
-                    '代金券',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    '定期赠送',
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: Colors.black38,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Get.toNamed(AppRoutes.account);
-              },
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(bottom: 2.w),
-                    child: Image.asset(
-                      R.acctBalance,
-                      height: 26.w,
-                      width: 30.w,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                  Text(
-                    '我的账户',
-                    style: TextStyle(color: Colors.black, fontSize: 12.sp),
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
+    MyTicketStore store = MyTicketStore();
+    store.initialize();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _ticketStat('${store.tickets.length}', '全部记录'),
+        _ticketStat('${store.pending.length}', '待开奖'),
+        _ticketStat('${store.winners.length}', '已中奖'),
+        _ticketStat('${store.totalPrize}', '累计奖金(元)'),
+      ],
+    );
+  }
+
+  ///
+  /// 单个统计数据
+  ///
+  Widget _ticketStat(String value, String label) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Get.toNamed(AppRoutes.ssqAssistant);
       },
+      child: Column(
+        children: [
+          Container(
+            height: 26.w,
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(bottom: 2.w),
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.black,
+                fontFamily: 'bebas',
+              ),
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(fontSize: 11.sp, color: Colors.black87),
+          ),
+        ],
+      ),
     );
   }
 
@@ -507,7 +381,7 @@ class UserCenterViewState extends State<UserCenterView>
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              Get.toNamed(AppRoutes.assistant);
+              Get.toNamed(AppRoutes.ssqAssistant);
             },
             child: _cellView(
               icon: R.assistant,
@@ -591,7 +465,7 @@ class UserCenterViewState extends State<UserCenterView>
             alignment: Alignment.centerLeft,
             margin: EdgeInsets.only(bottom: 8.w),
             child: Text(
-              '主要频道',
+              '快捷入口',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 16.sp,
@@ -605,43 +479,43 @@ class UserCenterViewState extends State<UserCenterView>
             child: Row(
               children: [
                 _lotteryChannel(
-                  title: '双色球频道',
-                  subTitle: '优质牛人大师荟萃',
+                  title: '我的彩票',
+                  subTitle: '购彩记录与自动核奖',
                   image: R.ssqLottoIcon,
                   onTap: () {
-                    Get.toNamed('/ssq/mul_rank/0');
+                    Get.toNamed(AppRoutes.ssqAssistant);
                   },
                 ),
                 SizedBox(width: 14.w),
                 _lotteryChannel(
-                  title: '大乐透频道',
-                  subTitle: '臻享专家预测推荐',
+                  title: '号码走势',
+                  subTitle: '遗漏与分布走势',
                   image: R.dltLottoIcon,
                   onTap: () {
-                    Get.toNamed('/dlt/mul_rank/0');
+                    Get.toNamed('/ssq/trend/0');
                   },
                 ),
                 SizedBox(width: 14.w),
                 _lotteryChannel(
-                  title: '福彩3D频道',
-                  subTitle: '优质大师荟萃云集',
+                  title: '历史开奖',
+                  subTitle: '官方数据逐期可查',
                   image: R.fc3dLottoIcon,
                   onTap: () {
-                    Get.toNamed(AppRoutes.fc3dMulRank);
+                    Get.toNamed('/lotto/history/ssq');
                   },
                 ),
                 SizedBox(width: 14.w),
                 _lotteryChannel(
-                  title: '排列三频道',
-                  subTitle: '精选专家推荐指导',
-                  image: R.pl3LottoIcon,
+                  title: '选号工具',
+                  subTitle: '缩水过滤与奖金计算',
+                  image: R.qlcLottoIcon,
                   onTap: () {
-                    Get.toNamed('/dlt/mul_rank/0');
+                    Get.toNamed(AppRoutes.ssqShrink);
                   },
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
