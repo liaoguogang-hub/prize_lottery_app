@@ -5,6 +5,7 @@ import 'package:prize_lottery_app/base/widgets/refresh_widget.dart';
 import 'package:prize_lottery_app/resources/colors.dart';
 import 'package:prize_lottery_app/resources/resources.dart';
 import 'package:prize_lottery_app/routes/names.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/views/glad/model/qlc_master_glad.dart';
 import 'package:prize_lottery_app/views/home/controller/qlc_home_controller.dart';
 import 'package:prize_lottery_app/views/home/widgets/achieve_tag_view.dart';
@@ -81,22 +82,26 @@ class QlcHomeViewState extends State<QlcHomeView>
           Expanded(
             child: Column(
               children: [
-                ChannelButton(
-                  text: '专家PK',
-                  icon: R.pkAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcBattle);
-                  },
-                ),
-                ChannelButton(
-                  text: '号码预警',
-                  icon: R.alertAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcAnaCensus);
-                  },
-                ),
+                if (AppFeatures.serverFeaturesEnabled)
+  ChannelButton(
+                    text: '专家PK',
+                    icon: R.pkAnalyzeIcon,
+                    size: 36.w,
+                    callback: () {
+                      Get.toNamed(AppRoutes.qlcBattle);
+                    },
+                  ),
+
+                if (AppFeatures.serverFeaturesEnabled)
+  ChannelButton(
+                    text: '号码预警',
+                    icon: R.alertAnalyzeIcon,
+                    size: 36.w,
+                    callback: () {
+                      Get.toNamed(AppRoutes.qlcAnaCensus);
+                    },
+                  ),
+
               ],
             ),
           ),
@@ -125,14 +130,16 @@ class QlcHomeViewState extends State<QlcHomeView>
           Expanded(
             child: Column(
               children: [
-                ChannelButton(
-                  text: '热点分析',
-                  icon: R.hotAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.qlcHotCensus);
-                  },
-                ),
+                if (AppFeatures.serverFeaturesEnabled)
+  ChannelButton(
+                    text: '热点分析',
+                    icon: R.hotAnalyzeIcon,
+                    size: 36.w,
+                    callback: () {
+                      Get.toNamed(AppRoutes.qlcHotCensus);
+                    },
+                  ),
+
                 ChannelButton(
                   text: '缩水过滤',
                   icon: R.filterAnalyzeIcon,

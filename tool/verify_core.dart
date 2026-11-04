@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:prize_lottery_app/data/official/local_census_calculator.dart';
 import 'package:prize_lottery_app/data/ssq/ssq_draw.dart';
+import 'package:prize_lottery_app/views/lottery/model/lottery_info.dart';
 import 'package:prize_lottery_app/data/ssq/ssq_prize_checker.dart';
 import 'package:prize_lottery_app/data/ssq/ssq_predictor.dart';
 import 'package:prize_lottery_app/data/ssq/ssq_random_picker.dart';
@@ -222,6 +224,97 @@ void main() {
         t.reds.every((e) => e >= 1 && e <= 33) &&
         t.blues.length == 1 && t.blues.first >= 1 && t.blues.first <= 16));
   }
+
+
+  print('== 选号统计结构回读(按上游 int.parse 方式)==');
+  final ssqDraws = <LotteryInfo>[];
+  for (int i = 0; i < 40; i++) {
+    final reds = List.generate(6, (k) => (k * 5 + i) % 33 + 1)
+      ..sort()
+      ..map((e) => e.toString().padLeft(2, '0'));
+    ssqDraws.add(LotteryInfo.fromJson({
+      'type': 'ssq',
+      'period': '2026${(40 - i).toString().padLeft(3, '0')}',
+      'red': reds.join(' '),
+      'blue': '${((i % 16) + 1).toString().padLeft(2, '0')}',
+      'shi': '',
+      'kai': '',
+      'lotDate': '2026/01/01',
+      'com': '',
+      'last': '',
+      'lastDelta': 0,
+    }));
+  }
+  final censusJson = LocalCensusCalculator.buildSsqJson(ssqDraws);
+  final requiredKeys = ['r1', 'r2', 'r3', 'r12', 'r20', 'r25', 'rk3', 'rk6', 'b3', 'b5', 'bk'];
+  bool keysOk = true;
+  for (final k in requiredKeys) {
+    if (censusJson[k] == null || censusJson[k]['values'] == null) {
+      keysOk = false;
+      print('  缺少字段: \$k');
+    }
+  }
+  check('统计结构字段齐全', keysOk);
+  // 上游 CensusValue.fromJson 用 int.parse 解析,值必须是字符串
+  bool parseOk = true;
+  for (final k in requiredKeys) {
+    try {
+      for (final row in censusJson[k]['values']) {
+        for (final v in row) {
+          int.parse(v);
+        }
+      }
+    } catch (e) {
+      parseOk = false;
+      print('  \$k 解析失败: \$e');
+    }
+  }
+  check('统计数值可被上游 int.parse 解析', parseOk);
+  final r3 = censusJson['r3']['values'][0].map(int.parse).toList();
+  check('r3 长度为 33', r3.length == 33, 'got \${r3.length}');
+  final b5 = censusJson['b5']['values'][0].map(int.parse).toList();
+  check('b5 长度为 16', b5.length == 16, 'got \${b5.length}');
+  check('r3 计数在 0..3 之间', r3.every((e) => e >= 0 && e <= 3));
+  check('rk6 计数在 0..6 之间', censusJson['rk6']['values'][0].map(int.parse).every((e) => e >= 0 && e <= 6));
+
+
+
+  final dltJson = LocalCensusCalculator.buildDltJson(ssqDraws);
+  final dltKeys = ['r2', 'r3', 'r10', 'r20', 'rk3', 'rk6', 'b2', 'b6', 'bk'];
+  bool dltOk = true;
+  for (final k in dltKeys) {
+    if (dltJson[k] == null || dltJson[k]['values'] == null) {
+      dltOk = false;
+      print('  大乐透缺少字段: \$k');
+    }
+  }
+  check('大乐透统计字段齐全', dltOk);
+  bool dltParse = true;
+  try {
+    for (final k in dltKeys) {
+      for (final row in dltJson[k]['values']) {
+        for (final v in row) {
+          int.parse(v);
+        }
+      }
+    }
+  } catch (e) {
+    dltParse = false;
+    print('  大乐透解析失败: \$e');
+  }
+  check('大乐透统计数值可被上游 int.parse 解析', dltParse);
+
+  final qlcJson = LocalCensusCalculator.buildQlcJson(ssqDraws);
+  final qlcKeys = ['r1', 'r2', 'r3', 'r12', 'r18', 'r22', 'k3', 'k6'];
+  bool qlcOk = true;
+  for (final k in qlcKeys) {
+    if (qlcJson[k] == null || qlcJson[k]['values'] == null) {
+      qlcOk = false;
+      print('  七乐彩缺少字段: \$k');
+    }
+  }
+  check('七乐彩统计字段齐全', qlcOk);
+
 
   print('');
   if (failures == 0) {

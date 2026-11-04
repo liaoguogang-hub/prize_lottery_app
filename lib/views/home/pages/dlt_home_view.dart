@@ -5,6 +5,7 @@ import 'package:prize_lottery_app/base/widgets/refresh_widget.dart';
 import 'package:prize_lottery_app/resources/colors.dart';
 import 'package:prize_lottery_app/resources/resources.dart';
 import 'package:prize_lottery_app/routes/names.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/views/glad/model/dlt_master_glad.dart';
 import 'package:prize_lottery_app/views/home/controller/dlt_home_controller.dart';
 import 'package:prize_lottery_app/views/home/widgets/achieve_tag_view.dart';
@@ -91,22 +92,26 @@ class DltHomeViewState extends State<DltHomeView>
           Expanded(
             child: Column(
               children: [
-                ChannelButton(
-                  text: '专家PK',
-                  icon: R.pkAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltBattle);
-                  },
-                ),
-                ChannelButton(
-                  text: '号码预警',
-                  icon: R.alertAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltAnaCensus);
-                  },
-                ),
+                if (AppFeatures.serverFeaturesEnabled)
+  ChannelButton(
+                    text: '专家PK',
+                    icon: R.pkAnalyzeIcon,
+                    size: 36.w,
+                    callback: () {
+                      Get.toNamed(AppRoutes.dltBattle);
+                    },
+                  ),
+
+                if (AppFeatures.serverFeaturesEnabled)
+  ChannelButton(
+                    text: '号码预警',
+                    icon: R.alertAnalyzeIcon,
+                    size: 36.w,
+                    callback: () {
+                      Get.toNamed(AppRoutes.dltAnaCensus);
+                    },
+                  ),
+
               ],
             ),
           ),
@@ -135,14 +140,16 @@ class DltHomeViewState extends State<DltHomeView>
           Expanded(
             child: Column(
               children: [
-                ChannelButton(
-                  text: '热点分析',
-                  icon: R.hotAnalyzeIcon,
-                  size: 36.w,
-                  callback: () {
-                    Get.toNamed(AppRoutes.dltHotCensus);
-                  },
-                ),
+                if (AppFeatures.serverFeaturesEnabled)
+  ChannelButton(
+                    text: '热点分析',
+                    icon: R.hotAnalyzeIcon,
+                    size: 36.w,
+                    callback: () {
+                      Get.toNamed(AppRoutes.dltHotCensus);
+                    },
+                  ),
+
                 ChannelButton(
                   text: '缩水过滤',
                   icon: R.filterAnalyzeIcon,

@@ -120,15 +120,15 @@ class SsqHomeViewState extends State<SsqHomeView>
           Expanded(
             child: Column(
               children: [
-                if (AppFeatures.serverFeaturesEnabled)
-                  ChannelButton(
-                    text: '综合分析',
-                    icon: R.zongheAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.ssqVipCensus);
-                    },
-                  ),
+ChannelButton(
+                  text: '综合分析',
+                  icon: R.zongheAnalyzeIcon,
+                  size: 36.w,
+                  callback: () {
+                    Get.toNamed(AppRoutes.ssqVipCensus);
+                  },
+                ),
+
 
                 ChannelButton(
                   text: '号码走势',
@@ -168,15 +168,15 @@ class SsqHomeViewState extends State<SsqHomeView>
           Expanded(
             child: Column(
               children: [
-                if (AppFeatures.serverFeaturesEnabled)
-                  ChannelButton(
-                    text: '臻选牛人',
-                    icon: R.masterAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.ssqRateCensus);
-                    },
-                  ),
+ChannelButton(
+                  text: '臻选牛人',
+                  icon: R.masterAnalyzeIcon,
+                  size: 36.w,
+                  callback: () {
+                    Get.toNamed(AppRoutes.ssqRateCensus);
+                  },
+                ),
+
 
                 ChannelButton(
                   text: '奖金计算',
@@ -193,15 +193,15 @@ class SsqHomeViewState extends State<SsqHomeView>
           Expanded(
             child: Column(
               children: [
-                if (AppFeatures.serverFeaturesEnabled)
-                  ChannelButton(
-                    text: '整体分析',
-                    icon: R.chartAnalyzeIcon,
-                    size: 36.w,
-                    callback: () {
-                      Get.toNamed(AppRoutes.ssqFullCensus);
-                    },
-                  ),
+ChannelButton(
+                  text: '整体分析',
+                  icon: R.chartAnalyzeIcon,
+                  size: 36.w,
+                  callback: () {
+                    Get.toNamed(AppRoutes.ssqFullCensus);
+                  },
+                ),
+
 
                 ChannelButton(
                   text: '历史开奖',

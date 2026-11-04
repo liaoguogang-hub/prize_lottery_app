@@ -1,3 +1,7 @@
+import 'package:prize_lottery_app/data/official/local_census_calculator.dart';
+import 'package:prize_lottery_app/data/official/official_lottery_api.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
+import 'package:prize_lottery_app/views/lottery/model/lottery_info.dart';
 import 'package:prize_lottery_app/base/model/fee_data_result.dart';
 import 'package:prize_lottery_app/utils/request.dart';
 import 'package:prize_lottery_app/views/census/model/dlt_chart_census.dart';
@@ -163,6 +167,64 @@ class LottoCensusRepository {
             ));
   }
 
+
+  ///
+  /// 本地计算双色球选号统计
+  ///
+  /// [level] 为统计样本期数,至少需要 25 期才能覆盖全部统计窗口
+  ///
+  static Future<FeeDataResult<SsqChartCensus>> _localSsqCensus(int level) async {
+    int limit = level < 30 ? 30 : level;
+    List<LotteryInfo> draws =
+        await OfficialLotteryApi().latestList('ssq', limit: limit);
+    Map<String, dynamic> json = LocalCensusCalculator.buildSsqJson(draws);
+    return FeeDataResult.fromJson(
+      json: {
+        'period': json['period'],
+        'feeRequired': false,
+        'data': json,
+      },
+      dataHandle: (e) => SsqChartCensus.fromJson(e),
+    );
+  }
+
+
+  ///
+  /// 本地计算大乐透选号统计
+  ///
+  static Future<FeeDataResult<DltChartCensus>> _localDltCensus(int level) async {
+    int limit = level < 30 ? 30 : level;
+    List<LotteryInfo> draws =
+        await OfficialLotteryApi().latestList('dlt', limit: limit);
+    Map<String, dynamic> json = LocalCensusCalculator.buildDltJson(draws);
+    return FeeDataResult.fromJson(
+      json: {
+        'period': json['period'],
+        'feeRequired': false,
+        'data': json,
+      },
+      dataHandle: (e) => DltChartCensus.fromJson(e),
+    );
+  }
+
+  ///
+  /// 本地计算七乐彩选号统计
+  ///
+  static Future<FeeDataResult<QlcChartCensus>> _localQlcCensus(int level) async {
+    int limit = level < 30 ? 30 : level;
+    List<LotteryInfo> draws =
+        await OfficialLotteryApi().latestList('qlc', limit: limit);
+    Map<String, dynamic> json = LocalCensusCalculator.buildQlcJson(draws);
+    return FeeDataResult.fromJson(
+      json: {
+        'period': json['period'],
+        'feeRequired': false,
+        'data': json,
+      },
+      dataHandle: (e) => QlcChartCensus.fromJson(e),
+    );
+  }
+
   ///
   ///
   static Future<SsqChartCensus> ssqRateCensus() {
@@ -173,7 +235,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<SsqChartCensus>> ssqRateCensusV1() {
+  static Future<FeeDataResult<SsqChartCensus>> ssqRateCensusV1() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localSsqCensus(30);
+    }
     return HttpRequest()
         .get('/slotto/app/ssq/v1/chart/rate')
         .then((value) => FeeDataResult.fromJson(
@@ -192,7 +257,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<SsqChartCensus>> ssqHotCensusV1() {
+  static Future<FeeDataResult<SsqChartCensus>> ssqHotCensusV1() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localSsqCensus(30);
+    }
     return HttpRequest()
         .get('/slotto/app/ssq/v1/chart/hot')
         .then((value) => FeeDataResult.fromJson(
@@ -211,7 +279,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<SsqChartCensus>> ssqLevelFullV1(int level) {
+  static Future<FeeDataResult<SsqChartCensus>> ssqLevelFullV1(int level) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localSsqCensus(level);
+    }
     return HttpRequest()
         .get('/slotto/app/ssq/v1/full/$level')
         .then((value) => FeeDataResult.fromJson(
@@ -230,7 +301,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<SsqChartCensus>> ssqLevelVipV1(int level) {
+  static Future<FeeDataResult<SsqChartCensus>> ssqLevelVipV1(int level) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localSsqCensus(level);
+    }
     return HttpRequest()
         .get('/slotto/app/ssq/v1/vip/$level')
         .then((value) => FeeDataResult.fromJson(
@@ -249,7 +323,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<DltChartCensus>> dltRateCensusV1() {
+  static Future<FeeDataResult<DltChartCensus>> dltRateCensusV1() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localDltCensus(30);
+    }
     return HttpRequest()
         .get('/slotto/app/dlt/v1/chart/rate')
         .then((value) => FeeDataResult.fromJson(
@@ -268,7 +345,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<DltChartCensus>> dltHotCensusV1() {
+  static Future<FeeDataResult<DltChartCensus>> dltHotCensusV1() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localDltCensus(30);
+    }
     return HttpRequest()
         .get('/slotto/app/dlt/v1/chart/hot')
         .then((value) => FeeDataResult.fromJson(
@@ -287,7 +367,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<DltChartCensus>> dltLevelFullV1(int level) {
+  static Future<FeeDataResult<DltChartCensus>> dltLevelFullV1(int level) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localDltCensus(level);
+    }
     return HttpRequest()
         .get('/slotto/app/dlt/v1/full/$level')
         .then((value) => FeeDataResult.fromJson(
@@ -306,7 +389,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<DltChartCensus>> dltLevelVipV1(int level) {
+  static Future<FeeDataResult<DltChartCensus>> dltLevelVipV1(int level) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localDltCensus(level);
+    }
     return HttpRequest()
         .get('/slotto/app/dlt/v1/vip/$level')
         .then((value) => FeeDataResult.fromJson(
@@ -325,7 +411,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<QlcChartCensus>> qlcRateCensusV1() {
+  static Future<FeeDataResult<QlcChartCensus>> qlcRateCensusV1() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localQlcCensus(30);
+    }
     return HttpRequest()
         .get('/slotto/app/qlc/v1/chart/rate')
         .then((value) => FeeDataResult.fromJson(
@@ -344,7 +433,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<QlcChartCensus>> qlcHotCensusV1() {
+  static Future<FeeDataResult<QlcChartCensus>> qlcHotCensusV1() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localQlcCensus(30);
+    }
     return HttpRequest()
         .get('/slotto/app/qlc/v1/chart/hot')
         .then((value) => FeeDataResult.fromJson(
@@ -363,7 +455,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<QlcChartCensus>> qlcLevelFullV1(int level) {
+  static Future<FeeDataResult<QlcChartCensus>> qlcLevelFullV1(int level) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localQlcCensus(level);
+    }
     return HttpRequest()
         .get('/slotto/app/qlc/v1/full/$level')
         .then((value) => FeeDataResult.fromJson(
@@ -382,7 +477,10 @@ class LottoCensusRepository {
 
   ///
   ///
-  static Future<FeeDataResult<QlcChartCensus>> qlcLevelVipV1(int level) {
+  static Future<FeeDataResult<QlcChartCensus>> qlcLevelVipV1(int level) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return _localQlcCensus(level);
+    }
     return HttpRequest()
         .get('/slotto/app/qlc/v1/vip/$level')
         .then((value) => FeeDataResult.fromJson(
