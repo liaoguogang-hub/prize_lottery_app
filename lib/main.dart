@@ -14,6 +14,7 @@ import 'package:prize_lottery_app/resources/assets_cache.dart';
 import 'package:prize_lottery_app/routes/names.dart';
 import 'package:prize_lottery_app/routes/observers.dart';
 import 'package:prize_lottery_app/routes/pages.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
 import 'package:prize_lottery_app/store/member.dart';
 import 'package:prize_lottery_app/store/store.dart';
 import 'package:prize_lottery_app/utils/page_route_transition.dart';
@@ -134,6 +135,9 @@ class MainAppState extends State<MainApp> {
 
     /// 用户信息存储器初始化
     UserStore();
+
+    /// 本地用户档案初始化(服务端不可用时提供账号等价能力)
+    LocalProfile().initialize();
 
     ///APP应用控制器初始化注册
     AppController();

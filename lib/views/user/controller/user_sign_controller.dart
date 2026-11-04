@@ -3,6 +3,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:prize_lottery_app/base/controller/request_controller.dart';
 import 'package:prize_lottery_app/store/balance.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/views/user/model/sign_info.dart';
 import 'package:prize_lottery_app/views/user/repository/checkin_repository.dart';
 import 'package:prize_lottery_app/views/user/repository/user_repository.dart';
@@ -32,6 +34,10 @@ class UserSignController extends AbsRequestController {
   ///
   /// 兑换积分
   void exchangeCoupon() {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      EasyLoading.showToast('积分兑换暂不可用');
+      return;
+    }
     ExchangeRule rule = signInfo.rule;
     if (!BalanceInstance().balance!.canExchange(rule.throttle)) {
       EasyLoading.showToast('积分余额不足');
@@ -77,6 +83,10 @@ class UserSignController extends AbsRequestController {
       EasyLoading.showToast('正在签到...');
       return;
     }
+    if (!AppFeatures.serverFeaturesEnabled) {
+      _localSign(success);
+      return;
+    }
     signing = true;
     update();
     CheckInRepository.userSign().then((value) {
@@ -106,8 +116,74 @@ class UserSignController extends AbsRequestController {
     });
   }
 
+  ///
+  /// 本地签到
+  ///
+  void _localSign(Function success) {
+    LocalProfile profile = LocalProfile();
+    if (profile.signedToday) {
+      EasyLoading.showToast('今天已经签到过了');
+      return;
+    }
+    signing = true;
+    update();
+    int award = profile.signIn();
+    signInfo
+      ..current = profile.points
+      ..acctCoupon = profile.points
+      ..hasSigned = 1
+      ..times = profile.signDays.length
+      ..coupon = profile.signDays.length * LocalProfile.signPoints
+      ..lastDate = profile.signDays.isEmpty ? null : profile.signDays.last;
+    logs = [
+      SignLog.fromJson({
+        'type': {'value': 1, 'name': '每日签到'},
+        'award': award,
+        'signTime': DateTime.now().toString().substring(0, 16),
+      }),
+      ...logs,
+    ];
+    if (logs.length > limit) {
+      logs = logs.sublist(0, limit);
+    }
+    BalanceInstance().incrCoupon = award;
+    signing = false;
+    success();
+    update();
+  }
+
+  ///
+  /// 本地签到信息
+  ///
+  SignInfo _localSignInfo() {
+    LocalProfile profile = LocalProfile();
+    int days = profile.signDays.length;
+    return SignInfo.fromJson({
+      'ecoupon': LocalProfile.signPoints,
+      'scoupon': 30,
+      'acctCoupon': profile.points,
+      'throttle': 100,
+      'series': 0,
+      'times': days,
+      'coupon': days * LocalProfile.signPoints,
+      'current': profile.points,
+      'hasSigned': profile.signedToday ? 1 : 0,
+      'lastDate': profile.signDays.isEmpty ? null : profile.signDays.last,
+      'exchangeRule': {'ratio': 100, 'throttle': 100},
+    });
+  }
+
   @override
   Future<void> request() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      await BalanceInstance().refreshIfNull();
+      signInfo = _localSignInfo();
+      logs = [];
+      Future.delayed(const Duration(milliseconds: 200), () {
+        showSuccess(signInfo);
+      });
+      return;
+    }
     Future<void> balanceAsync = BalanceInstance().refreshIfNull();
     Future<void> signAsync = CheckInRepository.querySignInfo().then((value) {
       signInfo = value;

@@ -1,6 +1,8 @@
 import 'package:prize_lottery_app/base/model/page_result.dart';
 import 'package:prize_lottery_app/utils/diagrams_table.dart';
 import 'package:prize_lottery_app/utils/hunt_table.dart';
+import 'package:prize_lottery_app/data/official/official_lottery_api.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/utils/request.dart';
 import 'package:prize_lottery_app/utils/wuxing_table.dart';
 import 'package:prize_lottery_app/views/lottery/model/fast_table.dart';
@@ -20,7 +22,14 @@ import 'package:prize_lottery_app/views/lottery/model/lottery_ott.dart';
 class LotteryInfoRepository {
   ///
   /// 查询最新彩种的开奖信息
-  static Future<LotteryInfo> latestLottery(String type) {
+  static Future<LotteryInfo> latestLottery(String type) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      LotteryInfo? info = await OfficialLotteryApi().latest(type);
+      if (info != null) {
+        return info;
+      }
+      throw Exception('官方开奖数据暂不可用');
+    }
     return HttpRequest()
         .get('/slotto/share/lotto/newest/$type')
         .then((value) => LotteryInfo.fromJson(value.data));
@@ -28,7 +37,11 @@ class LotteryInfoRepository {
 
   ///
   /// 查询彩种的最新开奖期号
-  static Future<String> latestPeriod(String type) {
+  static Future<String> latestPeriod(String type) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      LotteryInfo? info = await OfficialLotteryApi().latest(type);
+      return info?.period ?? '';
+    }
     return HttpRequest()
         .get('/slotto/share/lotto/latest/period/$type')
         .then((value) => value.data);
@@ -36,7 +49,14 @@ class LotteryInfoRepository {
 
   ///
   /// 分组查询全部彩种的最新开奖信息
-  static Future<List<LotteryInfo>> groupLatest() {
+  static Future<List<LotteryInfo>> groupLatest() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      List<LotteryInfo> list = await OfficialLotteryApi().groupLatest();
+      if (list.isNotEmpty) {
+        return list;
+      }
+      throw Exception('官方开奖数据暂不可用');
+    }
     return HttpRequest()
         .get('/slotto/share/lotto/newest/group/v1')
         .then((value) {
@@ -48,7 +68,10 @@ class LotteryInfoRepository {
   ///
   /// 查询最新指定期的开奖数据
   static Future<List<LotteryInfo>> latestLotteries(
-      {required String type, int limit = 2}) {
+      {required String type, int limit = 2}) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return OfficialLotteryApi().latestList(type, limit: limit);
+    }
     return HttpRequest().get(
       '/slotto/share/lotto/latest/list',
       params: {'type': type, 'limit': limit},
@@ -150,7 +173,27 @@ class LotteryInfoRepository {
   ///
   /// 分页查询历史开奖信息
   static Future<PageResult<LotteryInfo>> historyLotteries(
-      Map<String, dynamic> params) {
+      Map<String, dynamic> params) async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      String type = '${params['type'] ?? ''}';
+      int page = int.tryParse('${params['page'] ?? 1}') ?? 1;
+      int limit = int.tryParse('${params['limit'] ?? 10}') ?? 10;
+      int need = (page * limit).clamp(limit, 200);
+      List<LotteryInfo> all =
+          await OfficialLotteryApi().latestList(type, limit: need);
+      int start = (page - 1) * limit;
+      List<LotteryInfo> slice = start >= all.length
+          ? <LotteryInfo>[]
+          : all.sublist(
+              start, (start + limit) > all.length ? all.length : start + limit);
+      PageResult<LotteryInfo> result = PageResult<LotteryInfo>();
+      result.total = all.length;
+      result.current = page;
+      result.pageSize = limit;
+      result.size = slice.length;
+      result.records = slice;
+      return result;
+    }
     Map<String, dynamic> requestDto = {'noneNull': 1, ...params};
     return HttpRequest()
         .get('/slotto/share/lotto/list', params: requestDto)

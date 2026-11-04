@@ -25,11 +25,11 @@ class QlcHomeController extends AbsPageQueryController {
     Future<void> rankAsync =
         MasterRankRepository.mulQlcMasterRanks(limit: 6).then((value) => ranks
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     Future<void> gladAsync =
         MasterGladRepository.qlcGladList(limit: 6).then((value) => glads
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     await Future.wait([lotteryAsync, rankAsync, gladAsync]).then((values) {
       Future.delayed(const Duration(milliseconds: 250), () {
         state = RequestState.success;
@@ -47,11 +47,11 @@ class QlcHomeController extends AbsPageQueryController {
     Future<void> rankAsync =
         MasterRankRepository.mulQlcMasterRanks(limit: 6).then((value) => ranks
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     Future<void> gladAsync =
         MasterGladRepository.qlcGladList(limit: 6).then((value) => glads
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     await Future.wait([lotteryAsync, rankAsync, gladAsync]).then((values) {
       Future.delayed(const Duration(milliseconds: 250), () {
         state = RequestState.success;

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:prize_lottery_app/resources/resources.dart';
 import 'package:prize_lottery_app/resources/styles.dart';
 import 'package:prize_lottery_app/routes/names.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/store/balance.dart';
 import 'package:prize_lottery_app/store/member.dart';
 import 'package:prize_lottery_app/views/user/controller/user_center_controller.dart';
@@ -195,15 +196,16 @@ class UserCenterViewState extends State<UserCenterView>
   /// 数字账户面板
   Widget _acctNumberView() {
     return Container(
-      height: 138.w,
+      height: AppFeatures.serverFeaturesEnabled ? 138.w : 108.w,
       margin: EdgeInsets.only(top: 16.w),
       child: Stack(
         children: [
+          if (AppFeatures.serverFeaturesEnabled)
+            Positioned(
+              child: _userMemberView(),
+            ),
           Positioned(
-            child: _userMemberView(),
-          ),
-          Positioned(
-            top: 48.w,
+            top: AppFeatures.serverFeaturesEnabled ? 48.w : 10.w,
             left: 0,
             width: Get.width,
             child: Container(
@@ -434,16 +436,18 @@ class UserCenterViewState extends State<UserCenterView>
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              Get.toNamed(AppRoutes.subscribe);
-            },
-            child: _cellView(
-              icon: R.subscribe,
-              title: '关注收藏',
+          if (AppFeatures.serverFeaturesEnabled)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Get.toNamed(AppRoutes.subscribe);
+              },
+              child: _cellView(
+                icon: R.subscribe,
+                title: '关注收藏',
+              ),
             ),
-          ),
+
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
@@ -454,36 +458,42 @@ class UserCenterViewState extends State<UserCenterView>
               title: '签到活动',
             ),
           ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              Get.toNamed(AppRoutes.invite);
-            },
-            child: _cellView(
-              icon: R.shareGift,
-              title: '邀请赚钱',
+          if (AppFeatures.serverFeaturesEnabled)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Get.toNamed(AppRoutes.invite);
+              },
+              child: _cellView(
+                icon: R.shareGift,
+                title: '邀请赚钱',
+              ),
             ),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              Get.toNamed(AppRoutes.skillList);
-            },
-            child: _cellView(
-              icon: R.skill,
-              title: '选号攻略',
+
+          if (AppFeatures.serverFeaturesEnabled)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Get.toNamed(AppRoutes.skillList);
+              },
+              child: _cellView(
+                icon: R.skill,
+                title: '选号攻略',
+              ),
             ),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              Get.toNamed(AppRoutes.memberLog);
-            },
-            child: _cellView(
-              icon: R.order,
-              title: '我的订单',
+
+          if (AppFeatures.serverFeaturesEnabled)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Get.toNamed(AppRoutes.memberLog);
+              },
+              child: _cellView(
+                icon: R.order,
+                title: '我的订单',
+              ),
             ),
-          ),
+
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
@@ -504,26 +514,30 @@ class UserCenterViewState extends State<UserCenterView>
               title: '彩票助手',
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.reset);
-            },
-            behavior: HitTestBehavior.opaque,
-            child: _cellView(
-              icon: R.forecastMoney,
-              title: '账户安全',
+          if (AppFeatures.serverFeaturesEnabled)
+            GestureDetector(
+              onTap: () {
+                Get.toNamed(AppRoutes.reset);
+              },
+              behavior: HitTestBehavior.opaque,
+              child: _cellView(
+                icon: R.forecastMoney,
+                title: '账户安全',
+              ),
             ),
-          ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              Get.toNamed(AppRoutes.feedback);
-            },
-            child: _cellView(
-              icon: R.feedback2,
-              title: '反馈建议',
+
+          if (AppFeatures.serverFeaturesEnabled)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                Get.toNamed(AppRoutes.feedback);
+              },
+              child: _cellView(
+                icon: R.feedback2,
+                title: '反馈建议',
+              ),
             ),
-          ),
+
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {

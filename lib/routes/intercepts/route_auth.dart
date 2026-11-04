@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prize_lottery_app/routes/names.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
 import 'package:prize_lottery_app/store/store.dart';
 
 class RouteAuthMiddleware extends GetMiddleware {
@@ -15,6 +16,12 @@ class RouteAuthMiddleware extends GetMiddleware {
   RouteSettings? redirect(String? route) {
     String token = UserStore().authToken;
     if (token.isNotEmpty || route == AppRoutes.login) {
+      return null;
+    }
+    ///
+    /// 已建立本地档案的游客用户直接放行,不依赖服务端账号
+    ///
+    if (LocalProfile().ready) {
       return null;
     }
     ConfigStore().saveHistory();

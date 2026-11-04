@@ -29,16 +29,16 @@ class DltHomeController extends AbsPageQueryController {
         MasterRankRepository.mulDltMasterRanks(type: 0, limit: 6)
             .then((value) => ranks
               ..clear()
-              ..addAll(value.records));
+              ..addAll(value.records)).catchError((_) => <Never>[]);
     Future<void> bRankAsync =
         MasterRankRepository.mulDltMasterRanks(type: 1, limit: 6)
             .then((value) => bRanks
               ..clear()
-              ..addAll(value.records));
+              ..addAll(value.records)).catchError((_) => <Never>[]);
     Future<void> gladAsync =
         MasterGladRepository.dltGladList(limit: 6).then((value) => glads
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     await Future.wait([
       lotteryAsync,
       rankAsync,
@@ -61,16 +61,16 @@ class DltHomeController extends AbsPageQueryController {
     Future<void> rankAsync =
         MasterRankRepository.mulDltMasterRanks(limit: 6).then((value) => ranks
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     Future<void> bRankAsync =
         MasterRankRepository.mulDltMasterRanks(type: 1, limit: 6)
             .then((value) => bRanks
               ..clear()
-              ..addAll(value.records));
+              ..addAll(value.records)).catchError((_) => <Never>[]);
     Future<void> gladAsync =
         MasterGladRepository.dltGladList(limit: 6).then((value) => glads
           ..clear()
-          ..addAll(value.records));
+          ..addAll(value.records)).catchError((_) => <Never>[]);
     await Future.wait([
       lotteryAsync,
       rankAsync,

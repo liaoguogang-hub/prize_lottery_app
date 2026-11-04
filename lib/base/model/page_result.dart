@@ -25,6 +25,8 @@ class PageResult<T> {
   /// 返回数据集合
   List<T> records = [];
 
+  PageResult();
+
   PageResult.fromJson({
     required Map<String, dynamic> json,
     required DataConvertHandle<T> handle,

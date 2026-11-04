@@ -195,6 +195,42 @@ class UserLoginView extends StatelessWidget {
                 ),
               ),
             ),
+            Container(
+              margin: EdgeInsets.only(bottom: 24.w),
+              child: GestureDetector(
+                onTap: () {
+                  controller.enterAsGuest();
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(vertical: 11.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF0033),
+                    borderRadius: BorderRadius.circular(42.w),
+                  ),
+                  child: Text(
+                    '无需账号,直接使用',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(bottom: 12.w),
+              child: Text(
+                '账号服务暂不可用,直接使用可体验全部本地功能,数据保存在本机',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black26,
+                  fontSize: 12.sp,
+                  height: 1.5,
+                ),
+              ),
+            ),
           ],
         ),
       ),

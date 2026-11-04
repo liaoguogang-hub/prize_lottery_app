@@ -4,6 +4,7 @@ import 'package:prize_lottery_app/env/env_profile.dart';
 import 'package:prize_lottery_app/routes/names.dart';
 import 'package:prize_lottery_app/store/balance.dart';
 import 'package:prize_lottery_app/store/config.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
 import 'package:prize_lottery_app/utils/storage.dart';
 import 'package:prize_lottery_app/views/user/model/user_auth.dart';
 import 'package:prize_lottery_app/views/user/model/user_balance.dart';
@@ -56,6 +57,9 @@ class UserStore extends GetxController {
 
   ///
   /// 授权用户信息
+  ///
+  /// 服务端不可用时,回退到本地档案,保证界面始终有可展示的用户身份
+  ///
   AuthUser? get authUser {
     if (_authUser != null) {
       return _authUser;
@@ -63,6 +67,13 @@ class UserStore extends GetxController {
     Map? user = Storage().getObject('auth_user');
     if (user != null) {
       _authUser = AuthUser.fromJson(user);
+      return _authUser;
+    }
+    if (LocalProfile().ready) {
+      _authUser = AuthUser()
+        ..uid = LocalProfile().uid
+        ..nickname = LocalProfile().nickname
+        ..phone = '';
       return _authUser;
     }
     return null;
@@ -83,6 +94,11 @@ class UserStore extends GetxController {
   ///
   /// 清除本地登录信息
   ///
+  /// 服务端鉴权失效时的本地处理
+  ///
+  /// 服务端已下线,不再强制跳转登录页(否则用户会被卡在无法完成的验证码流程里),
+  /// 仅清理远端凭证并保留本地档案
+  ///
   void removeLocalAuth() {
     if (ConfigStore().unAuthedRoute == null) {
       ///暂存当前未授权的页面
@@ -92,6 +108,11 @@ class UserStore extends GetxController {
       authToken = '';
       authUser = null;
       BalanceInstance().balance = UserBalance.fromJson({});
+
+      if (LocalProfile().ready) {
+        ///本地档案用户继续使用,不跳转登录
+        return;
+      }
 
       /// 首页接口出现未授权情况
       if (currentRoute.current == AppRoutes.main) {

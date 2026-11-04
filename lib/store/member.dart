@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:prize_lottery_app/env/log_profile.dart';
 import 'package:prize_lottery_app/store/user.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/utils/storage.dart';
 import 'package:prize_lottery_app/views/user/model/user_member.dart';
 import 'package:prize_lottery_app/views/user/repository/member_repository.dart';
@@ -38,12 +39,21 @@ class MemberStore extends GetxController {
   }
 
   Future<void> refreshAuthed() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      return;
+    }
     if (UserStore().authToken != '') {
       refreshIfNull();
     }
   }
 
   Future<void> refreshMember() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      ///离线模式下没有付费会员,保持未开通状态
+      member = null;
+      update();
+      return;
+    }
     try {
       member = await MemberRepository.member();
     } catch (error) {

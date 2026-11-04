@@ -65,6 +65,8 @@ class AuthUser {
   ///是否绑定支付宝账户
   bool aliBind = false;
 
+  AuthUser();
+
   AuthUser.fromJson(Map json) {
     uid = json['uid'];
     nickname = json['nickname'];

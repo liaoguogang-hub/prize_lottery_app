@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:prize_lottery_app/resources/colors.dart';
 import 'package:prize_lottery_app/resources/styles.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/views/home/pages/dlt_home_view.dart';
 import 'package:prize_lottery_app/views/home/pages/fc3d_home_view.dart';
 import 'package:prize_lottery_app/views/home/pages/feed_home_view.dart';
@@ -23,39 +24,39 @@ class HomeCenterView extends StatefulWidget {
 class HomeCenterViewState extends State<HomeCenterView> {
   ///
   ///tab选项集合
-  final List<String> _tabs = [
-    '推 荐',
+  List<String> get _tabs => [
+    if (AppFeatures.serverFeaturesEnabled) '推 荐',
     '双色球',
     '大乐透',
     '福彩3D',
     '排列三',
     '七乐彩',
-    '选号技巧',
-    '中奖新闻',
+    if (AppFeatures.serverFeaturesEnabled) '选号技巧',
+    if (AppFeatures.serverFeaturesEnabled) '中奖新闻',
   ];
 
   ///
   ///tab页面集合
-  final List<Widget> _pages = [
-    const FeedHomeView(),
+  List<Widget> get _pages => [
+    if (AppFeatures.serverFeaturesEnabled) const FeedHomeView(),
     const SsqHomeView(),
     const DltHomeView(),
     const Fc3dHomeView(),
     const Pl3HomeView(),
     const QlcHomeView(),
-    const SkillHomeView(),
-    const NewsHomeView(),
+    if (AppFeatures.serverFeaturesEnabled) const SkillHomeView(),
+    if (AppFeatures.serverFeaturesEnabled) const NewsHomeView(),
   ];
 
-  List<List<Color>> gradients = [
-    recomColors,
+  List<List<Color>> get gradients => [
+    if (AppFeatures.serverFeaturesEnabled) recomColors,
     ssqColors,
     dltColors,
     fc3dColors,
     pl3Colors,
     qlcColors,
-    skillColors,
-    newsColors,
+    if (AppFeatures.serverFeaturesEnabled) skillColors,
+    if (AppFeatures.serverFeaturesEnabled) newsColors,
   ];
 
   List<Color> colors = recomColors;

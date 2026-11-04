@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
+import 'package:prize_lottery_app/utils/app_features.dart';
 import 'package:prize_lottery_app/views/user/model/user_balance.dart';
 import 'package:prize_lottery_app/views/user/repository/user_repository.dart';
 
@@ -48,7 +50,24 @@ class BalanceInstance extends GetxController {
 
   ///
   /// 刷新余额账户
+  ///
+  /// 离线模式下账户数据全部取自本地档案:积分来自签到累计,金额类字段固定为 0
+  ///
   Future<void> refreshBalance() async {
+    if (!AppFeatures.serverFeaturesEnabled) {
+      balance = UserBalance.fromJson({
+        'balance': 0,
+        'surplus': 0,
+        'invite': 0,
+        'coupon': LocalProfile().points,
+        'voucher': 0,
+        'withdraw': 0,
+        'canWithdraw': 0,
+        'withRmb': 0,
+        'withLatest': '',
+      });
+      return;
+    }
     try {
       balance = await UserInfoRepository.userBalance();
     } catch (_) {}

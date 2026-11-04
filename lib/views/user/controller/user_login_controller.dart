@@ -3,6 +3,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:prize_lottery_app/routes/names.dart';
 import 'package:prize_lottery_app/store/device.dart';
+import 'package:prize_lottery_app/store/local_profile.dart';
 import 'package:prize_lottery_app/store/member.dart';
 import 'package:prize_lottery_app/store/store.dart';
 import 'package:prize_lottery_app/utils/quick_phone_auth.dart';
@@ -13,6 +14,16 @@ import 'package:prize_lottery_app/views/user/repository/user_repository.dart';
 import 'package:prize_lottery_app/widgets/countdown_widget.dart';
 
 class UserLoginController extends GetxController {
+  ///
+  /// 以本地档案进入
+  ///
+  /// 服务端已下线,短信验证码流程不可用,提供无需账号的本地档案入口
+  ///
+  void enterAsGuest() {
+    LocalProfile().initialize();
+    Get.offAllNamed(AppRoutes.main);
+  }
+
   ///
   ///
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
